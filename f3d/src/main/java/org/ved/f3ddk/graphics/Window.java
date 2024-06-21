@@ -13,6 +13,7 @@ public class Window {
         frame.setSize(width, height);
         frame.setLayout(null);
         frame.setVisible(true);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         if(fullscreen){
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 

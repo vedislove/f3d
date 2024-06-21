@@ -9,7 +9,9 @@ import java.util.Scanner;
 import org.ved.f3ddk.graphics.Window;
 
 public class Filemanager {
+    private static boolean flag;
 
+    // Init
     public static void init(){
         try {
         // Create file on 1st startup
@@ -18,46 +20,12 @@ public class Filemanager {
               System.out.println("File created: " + conf.getName());
               try {
                 FileWriter wrt = new FileWriter("config.cfg");
-                wrt.write("width:" + "640" + "\nheight:" + "480" + "\nfullscreen:" + "1");
+                wrt.write("width " + "640" + "\nheight " + "480" + "\nfullscreen " + "0" + "\nEND " + "1");
                 wrt.close();
                 System.out.println("Successfully wrote to the file.");
 
-                // Read file
-              System.out.println("File already exists: " + conf.getName());
-              Config cfgc = new Filemanager.Config();
+                Filemanager.interpretator("config.cfg"); // READING
 
-            // Reading proc
-              File myObj = new File("config.cfg");
-              Scanner myReader = new Scanner(myObj);
-              int lng = 0;
-
-            // Calculating lines {else it is doesn't working :3 idk}
-              while(myReader.hasNextLine())
-                myReader.nextLine();
-                lng++;
-              myReader.close();
-              System.out.println(lng);
-
-            // Start reading
-              System.out.println("Running: config.cfg");
-              for(int i=0; i <= lng; i++){
-                System.out.println("Line"+ "[" + i + "]" + ":");
-
-              // Vars
-                // WIDTH
-                if(cfgc.readIntVar("config.cfg", i).name.equals("width")){
-                  Window.setWidth(cfgc.readIntVar("config.cfg", i).value);
-                  System.out.print("Window width = " + Window.getWidth() + "\n");
-                } else
-                // HEIGHT
-                if(cfgc.readIntVar("config.cfg", i).name.equals("height")){
-                  Window.setHeight(cfgc.readIntVar("config.cfg", i).value);
-                  System.out.print("Window height = " + Window.getHeight() + "\n");
-                // STOP
-                } else{
-                  break;
-                }
-              } // Loop END
             // Error
               } catch (IOException e) {
                 System.out.println("An error occurred.");
@@ -65,45 +33,12 @@ public class Filemanager {
               }
 
 
-            // READING
             } else {
             // Read file
               System.out.println("File already exists: " + conf.getName());
-              Config cfgc = new Filemanager.Config();
+              Filemanager.interpretator("config.cfg");
+            }
 
-            // Reading proc
-              File myObj = new File("config.cfg");
-              Scanner myReader = new Scanner(myObj);
-              int lng = 0;
-
-            // Calculating lines {else it is doesn't working :3 idk}
-              while(myReader.hasNextLine())
-                myReader.nextLine();
-                lng++;
-              myReader.close();
-              System.out.println(lng);
-
-            // Start reading
-              System.out.println("Running: config.cfg");
-              for(int i=0; i <= lng; i++){
-                System.out.println("Line"+ "[" + i + "]" + ":");
-
-              // Vars
-                // WIDTH
-                if(cfgc.readIntVar("config.cfg", i).name.equals("width")){
-                  Window.setWidth(cfgc.readIntVar("config.cfg", i).value);
-                  System.out.print("Window width = " + Window.getWidth() + "\n");
-                } else
-                // HEIGHT
-                if(cfgc.readIntVar("config.cfg", i).name.equals("height")){
-                  Window.setHeight(cfgc.readIntVar("config.cfg", i).value);
-                  System.out.print("Window height = " + Window.getHeight() + "\n");
-                // STOP
-                } else{
-                  break;
-                }
-              } // Loop END
-            } // Read END
             // Error
           } catch (IOException e) {
             System.out.println("An error occurred.");
@@ -111,6 +46,57 @@ public class Filemanager {
           }      
     } // Init END
 
+
+
+    public static void interpretator(String path) throws FileNotFoundException{
+      // Read file
+        Config cfgc = new Filemanager.Config();
+  
+      // Reading proc
+        File myObj = new File(path);
+        Scanner myReader = new Scanner(myObj);
+        int lng = 0;
+  
+      // Calculating lines {else it is doesn't working :3 idk}
+        while(myReader.hasNextLine()){
+          myReader.nextLine();
+          lng++;
+        }
+        myReader.close();
+        lng= lng-2;
+        System.out.println(lng);
+  
+      // Start reading
+        System.out.println("Running: " + path);
+        for(int i=0; i <= lng; i++){
+          System.out.println("Line"+ "[" + i + "]" + ":");
+          
+        // Vars
+          // WIDTH
+          if(cfgc.readIntVar(path, i).name.equals("width")){
+            Window.setWidth(cfgc.readIntVar(path, i).value);
+            System.out.print("Window width = " + Window.getWidth() + "\n");
+          } else
+          // HEIGHT
+          if(cfgc.readIntVar(path, i).name.equals("height")){
+            Window.setHeight(cfgc.readIntVar(path, i).value);
+            System.out.print("Window height = " + Window.getHeight() + "\n");
+          } else
+          // FULLSCREEN
+          if(cfgc.readIntVar(path, i).name.equals("fullscreen")){
+            if(cfgc.readIntVar(path, i).value == 1){
+              flag = true;
+            }
+            Window.setFullscreen(flag);
+            System.out.print("Window fullscreen = " + Window.getFullscreen() + "\n");
+  
+          } else if(cfgc.readIntVar(path, i).name.equals("END")){
+            System.out.println("END" + cfgc.readIntVar(path, i).value);
+            break;
+          }
+        } // Loop END
+        System.out.println("Reading done");
+      } // INTERPRETATOR END
 
 
 
@@ -144,5 +130,6 @@ public class Filemanager {
             }
             return var;
         } // read END
+
     }
 }
